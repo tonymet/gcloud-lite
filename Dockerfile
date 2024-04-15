@@ -1,14 +1,9 @@
-FROM alpine as base
-
-RUN apk add git curl
-
-# Minimalized Google cloud sdk
-FROM base as gcloud-installer
+FROM alpine 
 
 # Download python3 module dependencies  (will also install python-minimal which is only around 25Mb)
 RUN apk add python3 py-crcmod \
-        py-openssl
-ARG CLOUD_SDK_VERSION=452.0.1
+        py-openssl curl
+ARG CLOUD_SDK_VERSION=471.0.0
 ENV CLOUD_SDK_VERSION=$CLOUD_SDK_VERSION
 ENV PATH /google-cloud-sdk/bin:$PATH
 ENV CLOUDSDK_PYTHON=/usr/bin/python3
@@ -29,19 +24,14 @@ RUN ARCH=x86_64 && \
     rm -rf google-cloud-sdk/bin/anthoscli && \
     gcloud --version
 
-#...
-#<Add more stages if you need>
-#...
-
-# On your final stage, (here simply from base, for example)
-FROM base as final
-
-# Add to the path
 ENV PATH /google-cloud-sdk/bin:$PATH
 # Ask gcloud to use local python3
 ENV CLOUDSDK_PYTHON=/usr/bin/python3
 # Copy just the installed files
-copy --from=gcloud-installer /google-cloud-sdk /google-cloud-sdk
 # This is to be able to update gcloud packages
 # RUN git config --system credential.'https://source.developers.google.com'.helper gcloud.sh
+# RUN cd /google-cloud-sdk && \
+#   python3 -m compileall -q lib && \
+#   find lib -iname \*py | xargs rm -f 
+
 ENTRYPOINT [ "/google-cloud-sdk/bin/gcloud" ]
