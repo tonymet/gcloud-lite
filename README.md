@@ -21,6 +21,12 @@ $ docker pull us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite
 # re-use existing credentials with -v
 $ docker run -v$HOME:/root us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite  compute instances list
 ```
+### Running ghutil, bq and other utilities
+```
+$ docker run -v$HOME:/root --entrypoint ghutil  us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite ARGS
+$ docker run -v$HOME:/root --entrypoint bq us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite   ARGS
+```
+
 ## Downloading gcloud-lite .tgz release
 ```
 $ curl -LO https://github.com/tonymet/gcloud-lite/releases/download/472.0.0/google-cloud-cli-472.0.0-linux-x86_64-lite.tar.gz
