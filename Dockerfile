@@ -1,5 +1,5 @@
 FROM alpine 
-RUN apk add python3 py-crcmod \
+RUN apk add --no-cache python3 py-crcmod \
         py-openssl curl
 ARG CLOUD_SDK_VERSION=471.0.0
 ENV CLOUD_SDK_VERSION=$CLOUD_SDK_VERSION
@@ -14,9 +14,9 @@ RUN ARCH=x86_64 && \
     gcloud config set core/disable_usage_reporting true && \
     gcloud config set component_manager/disable_update_check true && \
     gcloud config set metrics/environment github_docker_image && \
-    gcloud components remove -q bq && \
+    # gcloud components remove -q bq && \
     gcloud components install -q beta && \
-    gcloud components install -q gke-gcloud-auth-plugin && \
+    # gcloud components install -q gke-gcloud-auth-plugin && \
     rm -rf $(find google-cloud-sdk/ -regex ".*/__pycache__") && \
     rm -rf google-cloud-sdk/.install/.backup && \
     rm -rf google-cloud-sdk/bin/anthoscli && \
