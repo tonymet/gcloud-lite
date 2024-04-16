@@ -11,10 +11,6 @@ GCloud-Lite is a distribution of the CLI that strips these unnessary dependencie
 * [Runnable docker image](https://console.cloud.google.com/artifacts/docker/tonym-us/us-west1/gcloud-lite/gcloud-lite?hl=en&project=tonym-us) — 93% smaller
 * [tgz tarball](https://github.com/tonymet/gcloud-lite/releases) — 75% smaller
 
-## Discussions About gcloud CLI bloat
-* https://github.com/GoogleCloudPlatform/gsutil/issues/1732
-
-
 ## Running the Docker Image
 ```
 $ docker pull us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite
@@ -32,3 +28,6 @@ $ docker run -v$HOME:/root --entrypoint bq us-west1-docker.pkg.dev/tonym-us/gclo
 $ curl -LO https://github.com/tonymet/gcloud-lite/releases/download/472.0.0/google-cloud-cli-472.0.0-linux-x86_64-lite.tar.gz
 $ tar -zxf *gz
 ```
+
+## Discussions About gcloud CLI bloat
+* https://github.com/GoogleCloudPlatform/gsutil/issues/1732
