@@ -7,7 +7,7 @@ ENV PATH /google-cloud-sdk/bin:$PATH
 ENV CLOUDSDK_PYTHON=/usr/bin/python3
 # Download and install cloud sdk. Review the components I install, you may not need them.
 RUN ARCH=x86_64 && \
-    curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz && \
+    curl -s -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz && \
     tar xzf google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz && \
     rm google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz && \
     rm -rf /google-cloud-sdk/platform/bundledpythonunix && \
