@@ -1,0 +1,41 @@
+
+{
+  "url": "https://api.github.com/repos/tonymet/gcloud-lite/releases/151444996",
+  "assets_url": "https://api.github.com/repos/tonymet/gcloud-lite/releases/151444996/assets",
+  "upload_url": "https://uploads.github.com/repos/tonymet/gcloud-lite/releases/151444996/assets{?name,label}",
+  "html_url": "https://github.com/tonymet/gcloud-lite/releases/tag/untagged-13972265935745010b08",
+  "id": 151444996,
+  "author": {
+    "login": "tonymet",
+    "id": 397995,
+    "node_id": "MDQ6VXNlcjM5Nzk5NQ==",
+    "avatar_url": "https://avatars.githubusercontent.com/u/397995?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/tonymet",
+    "html_url": "https://github.com/tonymet",
+    "followers_url": "https://api.github.com/users/tonymet/followers",
+    "following_url": "https://api.github.com/users/tonymet/following{/other_user}",
+    "gists_url": "https://api.github.com/users/tonymet/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/tonymet/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/tonymet/subscriptions",
+    "organizations_url": "https://api.github.com/users/tonymet/orgs",
+    "repos_url": "https://api.github.com/users/tonymet/repos",
+    "events_url": "https://api.github.com/users/tonymet/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/tonymet/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "node_id": "RE_kwDOLvBuJc4JBt4E",
+  "tag_name": "471.0.0",
+  "target_commitish": "master",
+  "name": "471.0.0",
+  "draft": true,
+  "prerelease": false,
+  "created_at": "2024-04-16T20:44:13Z",
+  "published_at": null,
+  "assets": [
+
+  ],
+  "tarball_url": null,
+  "zipball_url": null,
+  "body": "gcloud lite releas
