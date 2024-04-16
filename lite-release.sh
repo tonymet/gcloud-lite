@@ -2,6 +2,10 @@
 set -e
 
 build_tarball(){
+    if [[ -z $1 ]]; then
+        echo "\$1 is unset"
+        exit 1
+    fi
     if [[ -z $CLOUD_SDK_VERSION ]]; then
         echo "CLOUD_SDK_VERSION is unset"
         exit 1
@@ -14,7 +18,7 @@ build_tarball(){
     # ARCH=x86_64
     echo "starting download"
     mkdir -p $1 && cd $1 && \
-    curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz && \
+    curl -s -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz && \
         tar xzf google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz && \
         rm google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz && \
         rm -rf google-cloud-sdk/platform/bundledpythonunix && \
@@ -25,25 +29,33 @@ build_tarball(){
 }
 
 github_release(){
+    if [[ -z $1 ]]; then
+        echo "\$1 is unset"
+        exit 1
+    fi
     if [[ -z $TAG ]]; then
         echo "TAG is unset"
+        exit 1
+    fi
+    if [[ -z $GH_TOKEN ]]; then
+        echo "GH_TOKEN is unset"
         exit 1
     fi
     cd $1
     echo "creating release"
     res=$(\
-        curl -L \
+        curl -s -L \
     -X POST \
     -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer $GH_TOKEN" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     https://api.github.com/repos/tonymet/gcloud-lite/releases \
-    -d "{\"tag_name\":\"$TAG\",\"target_commitish\":\"master\",\"name\":\"$TAG\",\"body\":\"gcloud lite release\",\"draft\":true,\"prerelease\":false,\"generate_release_notes\":false}"\
+    -d "{\"tag_name\":\"$TAG\",\"target_commitish\":\"master\",\"name\":\"$TAG\",\"body\":\"gcloud lite release\",\"draft\":false,\"prerelease\":false,\"generate_release_notes\":false}"\
     )
 
     echo "uploading asset" 
     ID=$(echo $res | jq .id)
-    curl -L \
+    curl -s -L \
     -X POST \
     -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer $GH_TOKEN" \
