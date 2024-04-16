@@ -31,14 +31,15 @@ github_release(){
         echo "\$1 is unset"
         exit 1
     fi
-    if [[ -z $TAG ]]; then
-        echo "TAG is unset"
+    if [[ -z $CLOUD_SDK_VERSION ]]; then
+        echo "CLOUD_SDK_VERSION is unset"
         exit 1
     fi
     if [[ -z $GH_TOKEN ]]; then
         echo "GH_TOKEN is unset"
         exit 1
     fi
+    TAG=$CLOUD_SDK_VERSION
     cd $1
     echo "creating release"
     res=$(\
