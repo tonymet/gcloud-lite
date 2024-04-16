@@ -14,8 +14,6 @@ build_tarball(){
         echo "ARCH is unset"
         exit 1
     fi
-    # CLOUD_SDK_VERSION=471.0.0
-    # ARCH=x86_64
     echo "starting download"
     mkdir -p $1 && cd $1 && \
     curl -s -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz && \
