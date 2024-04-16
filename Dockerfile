@@ -1,7 +1,7 @@
 FROM alpine 
 RUN apk add --no-cache python3 py-crcmod \
         py-openssl curl
-ARG CLOUD_SDK_VERSION=471.0.0
+ARG CLOUD_SDK_VERSION=472.0.0
 ENV CLOUD_SDK_VERSION=$CLOUD_SDK_VERSION
 ENV PATH /google-cloud-sdk/bin:$PATH
 ENV CLOUDSDK_PYTHON=/usr/bin/python3
