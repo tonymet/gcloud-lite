@@ -1,6 +1,6 @@
-# GCloud-Lite Distribution
+# gcloud-lite CLI Distribution
 
-[Google's gcloud CLI distriibution](https://cloud.google.com/sdk/docs/install)
+[Google's gcloud CLI distribution](https://cloud.google.com/sdk/docs/install)
 is bloated with unnecessary dependencies including a complete python3
 installation and large anthos binary.  This results in slower instance boot
 times, and costly storage & transfer fees
