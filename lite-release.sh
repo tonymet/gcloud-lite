@@ -64,5 +64,21 @@ github_release(){
     --data-binary "@google-cloud-cli-$TAG-linux-x86_64-lite.tar.gz"
 }
 
+function check_version(){
+    set +e
+    if [[ -z $CLOUD_SDK_VERSION ]]; then
+        echo "\$CLOUD_SDK_VERSION is unset"
+        exit 1
+    fi
+    curl -f -X HEAD -o/dev/null \
+        "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-$CLOUD_SDK_VERSION-linux-x86_64.tar.gz"
+    if [[ $? -ne 18 ]] ; then
+        echo "ERROR: version $CLOUD_SDK_VERSION is not available"
+        exit 1
+    fi
+    set -e
+}
+
+check_version
 build_tarball $1
 github_release $1
