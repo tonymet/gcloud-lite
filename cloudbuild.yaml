@@ -1,9 +1,9 @@
 steps:
   # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 
+    args: ['build', '--build-arg', 'CLOUD_SDK_VERSION=${_CLOUD_SDK_VERSION}', '-t',
            'us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:latest',
-           '-t', 'us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:472.0.0',
+           '-t', 'us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:${_CLOUD_SDK_VERSION}',
            '.']
  # Docker Push
   - name: 'gcr.io/cloud-builders/docker'
