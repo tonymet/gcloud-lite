@@ -9,3 +9,5 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', '-a',
            'us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite']
+options:
+  logging: CLOUD_LOGGING_ONLY
