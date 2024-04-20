@@ -43,7 +43,7 @@ github_release(){
     cd $1
     echo "creating release"
     res=$(\
-        curl -s -L \
+        curl -s -L -f \
     -X POST \
     -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer $GH_TOKEN" \
@@ -51,9 +51,13 @@ github_release(){
     https://api.github.com/repos/tonymet/gcloud-lite/releases \
     -d "{\"tag_name\":\"$TAG\",\"target_commitish\":\"master\",\"name\":\"$TAG\",\"body\":\"gcloud lite release\",\"draft\":false,\"prerelease\":false,\"generate_release_notes\":false}"\
     )
-
-    echo "uploading asset" 
+    if [[ $? -ne 0 ]]; then
+        echo "ERROR: create release fail"
+        echo "res=$res"
+        exit 1
+    fi
     ID=$(echo $res | jq .id)
+    echo "uploading asset id=$ID" 
     curl -s -L \
     -X POST \
     -H "Accept: application/vnd.github+json" \
@@ -62,6 +66,22 @@ github_release(){
     -H "Content-Type: application/octet-stream" \
     "https://uploads.github.com/repos/tonymet/gcloud-lite/releases/$ID/assets?name=google-cloud-cli-$TAG-linux-x86_64-lite.tar.gz" \
     --data-binary "@google-cloud-cli-$TAG-linux-x86_64-lite.tar.gz"
+}
+
+function record_version(){
+    echo "gcs object gcloud-lite/version-saved version=$CLOUD_SDK_VERSION"
+    ./gcloud-cmd set-object tonym.us gcloud-lite/version-saved $CLOUD_SDK_VERSION
+    if [[ $? -ne 0 ]]; then
+        echo "ERROR: set-object failed"
+    fi
+}
+
+function trigger_build(){
+    echo "pub-sub build version=$CLOUD_SDK_VERSION"
+    ./gcloud-cmd pub-sub-build $CLOUD_SDK_VERSION
+    if [[ $? -ne 0 ]]; then
+        echo "ERROR: pubsub failed"
+    fi
 }
 
 function check_version(){
@@ -82,3 +102,5 @@ function check_version(){
 check_version
 build_tarball $1
 github_release $1
+record_version
+trigger_build
