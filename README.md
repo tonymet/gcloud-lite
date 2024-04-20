@@ -29,5 +29,34 @@ $ curl -LO https://github.com/tonymet/gcloud-lite/releases/download/472.0.0/goog
 $ tar -zxf *gz
 ```
 
+## Benchmarks
+Tested on GCP Compute Instance e2-medium
+| Image        | Time      | Improvement |
+|--------------|-----------|------------|
+| google-cloud-cli | 1m29s     | -     |
+| gcloud-lite      | 16s  |    82%  |
+
+```
+# time  docker pull us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-liteUsing default tag: latest
+latest: Pulling from tonym-us/gcloud-lite/gcloud-lite
+Status: Downloaded newer image for us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite:latest
+us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite:latest
+
+real    0m15.965s
+user    0m0.982s
+sys     0m0.174s
+```
+
+```
+# time docker pull gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+latest: Pulling from google.com/cloudsdktool/google-cloud-cli
+
+Status: Downloaded newer image for gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+
+real    1m28.957s
+user    0m1.130s
+sys     0m0.189s
+```
 ## Discussions About gcloud CLI bloat
 * https://github.com/GoogleCloudPlatform/gsutil/issues/1732
