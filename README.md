@@ -34,17 +34,18 @@ Tested on GCP Compute Instance e2-medium
 | Image        | Time      | Improvement |
 |--------------|-----------|------------|
 | google-cloud-cli | 1m29s     | -     |
-| gcloud-lite      | 16s  |    82%  |
+| gcloud-lite      | 12.6s  |    86%  |
 
 ```
-# time  docker pull us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-liteUsing default tag: latest
+# time  docker pull us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite
+Using default tag: latest
 latest: Pulling from tonym-us/gcloud-lite/gcloud-lite
 Status: Downloaded newer image for us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite:latest
 us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite:latest
 
-real    0m15.965s
-user    0m0.982s
-sys     0m0.174s
+real    0m12.620s
+user    0m0.474s
+sys     0m0.114s
 ```
 
 ```
