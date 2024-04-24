@@ -22,8 +22,8 @@ build_tarball(){
         rm -rf google-cloud-sdk/platform/bundledpythonunix && \
         rm -rf google-cloud-sdk/bin/anthoscli && \
         rm -rf google-cloud-sdk/lib/third_party/botocore && \
-        tar -czf  google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}-lite.tar.gz google-cloud-sdk 
-    cd ..
+        tar -czf  google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}-lite.tar.gz google-cloud-sdk && \ 
+        cd ..
 }
 
 github_release(){
@@ -66,6 +66,7 @@ github_release(){
     -H "Content-Type: application/octet-stream" \
     "https://uploads.github.com/repos/tonymet/gcloud-lite/releases/$ID/assets?name=google-cloud-cli-$TAG-linux-x86_64-lite.tar.gz" \
     --data-binary "@google-cloud-cli-$TAG-linux-x86_64-lite.tar.gz"
+    cd ..
 }
 
 function record_version(){
