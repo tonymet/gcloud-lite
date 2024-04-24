@@ -22,7 +22,7 @@ build_tarball(){
         rm -rf google-cloud-sdk/platform/bundledpythonunix && \
         rm -rf google-cloud-sdk/bin/anthoscli && \
         rm -rf google-cloud-sdk/lib/third_party/botocore && \
-        tar -czf  google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}-lite.tar.gz google-cloud-sdk && \ 
+        tar -czf  google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}-lite.tar.gz google-cloud-sdk && \
         cd ..
 }
 
