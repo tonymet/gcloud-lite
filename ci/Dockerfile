@@ -1,7 +1,9 @@
 # build gcloud-cmd
 FROM golang:alpine as go-build
-COPY *.go go.mod go.sum /app/
 WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY *.go .
 RUN go build -o gcloud-cmd -tags osusergo,netgo -ldflags "-s -w" .
 
 # runnable image

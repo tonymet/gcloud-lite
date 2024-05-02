@@ -1,5 +1,7 @@
 #!/bin/zsh
 set -e
+BUCKET="tonym.us"
+OBJECT="gcloud-lite/version-saved"
 
 build_tarball(){
     if [[ -z $1 ]]; then
@@ -99,7 +101,8 @@ function check_version(){
     fi
     set -e
 }
-
+CLOUD_SDK_VERSION=$(./gcloud-cmd active-version "$BUCKET" "$OBJECT")
+export CLOUD_SDK_VERSION
 check_version
 build_tarball $1
 github_release $1
