@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -107,6 +108,16 @@ func pubsubPushBuild(v string) {
 	defer t.Stop()
 	t.Publish(ctx, &pubsub.Message{Data: []byte("{\"command\": \"docker-build\", \"cloud_sdk_version\": \"" + v + "\"}")})
 }
+
+func incrementVersion(v string) string {
+	major := strings.Split(v, ".")
+	if val, err := strconv.ParseInt(major[0], 10, 32); err != nil {
+		panic(err)
+	} else {
+		return fmt.Sprintf("%d.0.0", val+1)
+	}
+}
+
 func main() {
 	switch os.Args[1] {
 	case "set-object":
@@ -115,6 +126,8 @@ func main() {
 		syncUp()
 	case "sync-down":
 		syncDown(os.Args[2], os.Args[3])
+	case "active-version":
+		fmt.Printf("%s\n", incrementVersion("474.0.0"))
 	case "get-object":
 		getObject(os.Args[2], os.Args[3])
 	case "pub-sub-build":
