@@ -75,22 +75,40 @@ func syncDown(bucket, prefix string) {
 		}
 	}
 }
-func getObject(bucket, object string) {
+func getObjectStdout(bucket, object string) {
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Minute)
 	defer cancel()
+	obj := getObject(ctx, bucket, object)
+	if r, err := obj.NewReader(ctx); err != nil {
+		panic(err)
+	} else {
+		io.Copy(os.Stdout, r)
+	}
+}
+
+func getObjectContents(bucket, object string) string {
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, time.Minute)
+	defer cancel()
+	obj := getObject(ctx, bucket, object)
+	r, err := obj.NewReader(ctx)
+	if err != nil {
+		panic(err)
+	}
+	var result strings.Builder
+	io.Copy(&result, r)
+	return result.String()
+}
+
+func getObject(ctx context.Context, bucket, object string) *storage.ObjectHandle {
 	client, err := storage.NewClient(ctx)
 	if err != nil {
 		panic(err)
 	}
 	defer client.Close()
 	bkt := client.Bucket(bucket)
-	obj := bkt.Object(object)
-	if r, err := obj.NewReader(ctx); err != nil {
-		panic(err)
-	} else {
-		io.Copy(os.Stdout, r)
-	}
+	return bkt.Object(object)
 }
 
 func syncUp() {}
@@ -118,6 +136,10 @@ func incrementVersion(v string) string {
 	}
 }
 
+func getActiveVersion(bucket, object string) string {
+	return incrementVersion(getObjectContents(bucket, object))
+}
+
 func main() {
 	switch os.Args[1] {
 	case "set-object":
@@ -127,9 +149,9 @@ func main() {
 	case "sync-down":
 		syncDown(os.Args[2], os.Args[3])
 	case "active-version":
-		fmt.Printf("%s\n", incrementVersion("474.0.0"))
+		fmt.Printf("%s\n", getActiveVersion(os.Args[2], os.Args[3]))
 	case "get-object":
-		getObject(os.Args[2], os.Args[3])
+		getObjectStdout(os.Args[2], os.Args[3])
 	case "pub-sub-build":
 		pubsubPushBuild(os.Args[2])
 	default:
