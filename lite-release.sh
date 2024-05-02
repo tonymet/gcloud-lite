@@ -1,8 +1,17 @@
 #!/bin/zsh
 set -e
-BUCKET="tonym.us"
-OBJECT="gcloud-lite/version-saved"
-
+if [[ -z $PROJECT ]]; then
+    echo "PROJECT is unset"
+    exit 1
+fi
+if [[ -z $OBJECT ]]; then
+    echo "OBJECT is unset"
+    exit 1
+fi
+if [[ -z $BUCKET ]]; then
+    echo "BUCKET is unset"
+    exit 1
+fi
 build_tarball(){
     if [[ -z $1 ]]; then
         echo "\$1 is unset"
@@ -73,7 +82,7 @@ github_release(){
 
 function record_version(){
     echo "gcs object gcloud-lite/version-saved version=$CLOUD_SDK_VERSION"
-    ./gcloud-cmd set-object tonym.us gcloud-lite/version-saved $CLOUD_SDK_VERSION
+    ./gcloud-cmd set-object $BUCKET $OBJECT $CLOUD_SDK_VERSION
     if [[ $? -ne 0 ]]; then
         echo "ERROR: set-object failed"
     fi
@@ -81,7 +90,7 @@ function record_version(){
 
 function trigger_build(){
     echo "pub-sub build version=$CLOUD_SDK_VERSION"
-    ./gcloud-cmd pub-sub-build $CLOUD_SDK_VERSION
+    ./gcloud-cmd pub-sub-build $PROJECT $CLOUD_SDK_VERSION
     if [[ $? -ne 0 ]]; then
         echo "ERROR: pubsub failed"
     fi

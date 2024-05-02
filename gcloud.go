@@ -113,11 +113,11 @@ func getObject(ctx context.Context, bucket, object string) *storage.ObjectHandle
 
 func syncUp() {}
 
-func pubsubPushBuild(v string) {
+func pubsubPushBuild(project, v string) {
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, time.Minute)
 	defer cancel()
-	c, err := pubsub.NewClient(ctx, "tonym-us")
+	c, err := pubsub.NewClient(ctx, project)
 	if err != nil {
 		panic(err)
 	}
@@ -153,7 +153,7 @@ func main() {
 	case "get-object":
 		getObjectStdout(os.Args[2], os.Args[3])
 	case "pub-sub-build":
-		pubsubPushBuild(os.Args[2])
+		pubsubPushBuild(os.Args[2], os.Args[3])
 	default:
 		panic(fmt.Sprintf("invalid argument %s ", os.Args[1]))
 	}
