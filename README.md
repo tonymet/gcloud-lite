@@ -63,3 +63,6 @@ sys     0m0.189s
 * https://github.com/GoogleCloudPlatform/gsutil/issues/1732
 * https://issuetracker.google.com/issues/324114897?pli=1
 * https://issuetracker.google.com/issues/239207289
+
+## Acknowledgements
+* Big thanks to [@framegrace](https://github.com/framegrace) for [developing the logic to strip unnecessary components](https://github.com/GoogleCloudPlatform/gsutil/issues/1732#issuecomment-2029591598)
