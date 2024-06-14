@@ -98,6 +98,7 @@ function trigger_build(){
 
 function check_version(){
     set +e
+    echo "check_version $CLOUD_SDK_VERSION"
     if [[ -z $CLOUD_SDK_VERSION ]]; then
         echo "\$CLOUD_SDK_VERSION is unset"
         exit 1
