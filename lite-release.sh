@@ -60,7 +60,7 @@ github_release(){
     -H "Authorization: Bearer $GH_TOKEN" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     https://api.github.com/repos/tonymet/gcloud-lite/releases \
-    -d "{\"tag_name\":\"$TAG\",\"target_commitish\":\"master\",\"name\":\"$TAG\",\"body\":\"gcloud lite release\",\"draft\":false,\"prerelease\":false,\"generate_release_notes\":false}"\
+    -d "{\"tag_name\":\"$TAG\",\"target_commitish\":\"master\",\"name\":\"$TAG\",\"body\":\"gcloud lite release. See Release notes https://cloud.google.com/sdk/docs/release-notes\",\"draft\":false,\"prerelease\":false,\"generate_release_notes\":false}"\
     )
     if [[ $? -ne 0 ]]; then
         echo "ERROR: create release fail"

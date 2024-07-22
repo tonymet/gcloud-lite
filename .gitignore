@@ -3,3 +3,4 @@ build2
 .env
 gcloud-cmd
 gcloud-lite
+tmp
