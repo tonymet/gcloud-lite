@@ -5,9 +5,6 @@ steps:
            'us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:latest',
            '-t', 'us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:${_CLOUD_SDK_VERSION}',
            '.']
- # Docker Push
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '-a',
-           'us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite']
+images: 'us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite'
 options:
   logging: CLOUD_LOGGING_ONLY
