@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -14,6 +15,19 @@ import (
 	"cloud.google.com/go/storage"
 	"google.golang.org/api/iterator"
 )
+
+type buildCommand struct {
+	Command string `json:"command"`
+	Version string `json:"cloud_sdk_version"`
+}
+
+func (bc buildCommand) toJson() ([]byte, error) {
+	if b, err := json.Marshal(bc); err != nil {
+		return []byte{}, err
+	} else {
+		return b, nil
+	}
+}
 
 // uploadFile uploads an object.
 func setObject(bucket, object, contents string) error {
@@ -124,7 +138,16 @@ func pubsubPushBuild(project, v string) {
 	defer c.Close()
 	t := c.Topic("gcloud-lite")
 	defer t.Stop()
-	t.Publish(ctx, &pubsub.Message{Data: []byte("{\"command\": \"docker-build\", \"cloud_sdk_version\": \"" + v + "\"}")})
+	bc := buildCommand{"docker-build", v}
+	if bcMarshalled, err := bc.toJson(); err != nil {
+		panic(err)
+	} else {
+		pr := t.Publish(ctx, &pubsub.Message{Data: bcMarshalled})
+		if _, err := pr.Get(ctx); err != nil {
+			panic(err)
+		}
+		fmt.Printf("publish complete. message = %s", string(bcMarshalled))
+	}
 }
 
 func incrementVersion(v string) string {
