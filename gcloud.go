@@ -19,6 +19,14 @@ import (
 	"google.golang.org/api/iterator"
 )
 
+func logErr(format string, params ...any) {
+	if len(params) > 0 {
+		fmt.Fprintf(os.Stderr, format, params...)
+	} else {
+		fmt.Fprint(os.Stderr, format)
+	}
+}
+
 type buildCommand struct {
 	Command string `json:"command"`
 	Version string `json:"cloud_sdk_version"`
@@ -75,7 +83,7 @@ func syncDown(bucket, prefix string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("name: %s\n", attrs.Name)
+		logErr("name: %s\n", attrs.Name)
 		switch {
 		case strings.HasSuffix(attrs.Name, "/"):
 			if err := os.MkdirAll(attrs.Name, 0750); err != nil {
@@ -149,7 +157,7 @@ func pubsubPushBuild(project, v string) {
 		if _, err := pr.Get(ctx); err != nil {
 			panic(err)
 		}
-		fmt.Printf("publish complete. message = %s", string(bcMarshalled))
+		logErr("publish complete. message = %s", string(bcMarshalled))
 	}
 }
 
@@ -181,7 +189,7 @@ func githubRelease(args githubArgs) {
 		TargetCommitish: &commit,
 	}
 	if _, res, err := client.Repositories.GetReleaseByTag(ctx, owner, repo, tagValue); res != nil && res.StatusCode == 200 {
-		fmt.Fprintf(os.Stderr, "Release already exists, skipping")
+		logErr("Release already exists, skipping\n")
 		os.Exit(0)
 	} else if (res != nil && res.StatusCode != 404) || (err != nil && res == nil) {
 		panic(err)
@@ -193,8 +201,8 @@ func githubRelease(args githubArgs) {
 	} else if asset, _, err := client.Repositories.UploadReleaseAsset(ctx, owner, repo, *repoObj.ID, &github.UploadOptions{Name: path.Base(file)}, fileHandle); err != nil {
 		panic(err)
 	} else {
-		fmt.Printf("release ID: %+d\n", repoObj.ID)
-		fmt.Printf("asset ID: %+x\n", asset.ID)
+		logErr("release ID: %+d\n", repoObj.ID)
+		logErr("asset ID: %+x\n", asset.ID)
 	}
 }
 
@@ -234,6 +242,6 @@ func main() {
 		cmdGithubRelease.Parse(os.Args[2:])
 		githubRelease(cmdArgsGithub)
 	default:
-		panic(fmt.Sprintf("invalid argument %s ", os.Args[1]))
+		panic(fmt.Errorf("invalid argument %s ", os.Args[1]))
 	}
 }
