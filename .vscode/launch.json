@@ -9,8 +9,19 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${fileDirname}",
+            "program": "${workspaceFolder}/gcloud.go",
             "args": ["pub-sub-build", "tonym-us", "497.0.0"]
+        },
+        {
+            "name": "github-release",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/gcloud.go",
+            "args": ["github-release", "-owner","tonymet","-repo","gcloud-lite","-file","./test-release.tgz","-commit","4ea0f1fa5b2252c2d3e58d42999e49bb8ae18fba"],
+            "env" : {"GODEBUG": "http1debug=1"},
+            "envFile": "${workspaceFolder}/.env",
         }
+
     ]
 }

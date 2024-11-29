@@ -3,16 +3,19 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"time"
 
 	"cloud.google.com/go/pubsub"
 	"cloud.google.com/go/storage"
+	"github.com/google/go-github/v67/github"
 	"google.golang.org/api/iterator"
 )
 
@@ -163,6 +166,56 @@ func getActiveVersion(bucket, object string) string {
 	return incrementVersion(getObjectContents(bucket, object))
 }
 
+func githubRelease(args githubArgs) {
+	owner, repo, file, commit := args.owner, args.repo, args.file, args.commit
+	var tagValue string
+	if args.tag != "" {
+		tagValue = args.tag
+	} else {
+		tagValue = time.Now().Format(time.DateOnly) + "-" + commit[0:7]
+	}
+	ctx := context.Background()
+	client := github.NewClient(nil).WithAuthToken(os.Getenv("GH_TOKEN"))
+	r := &github.RepositoryRelease{
+		TagName:         &tagValue,
+		TargetCommitish: &commit,
+	}
+	if _, res, err := client.Repositories.GetReleaseByTag(ctx, owner, repo, tagValue); res != nil && res.StatusCode == 200 {
+		fmt.Fprintf(os.Stderr, "Release already exists, skipping")
+		os.Exit(0)
+	} else if (res != nil && res.StatusCode != 404) || (err != nil && res == nil) {
+		panic(err)
+	}
+	if repoObj, _, err := client.Repositories.CreateRelease(ctx, owner, repo, r); err != nil {
+		panic(err)
+	} else if fileHandle, err := os.Open(file); err != nil {
+		panic(err)
+	} else if asset, _, err := client.Repositories.UploadReleaseAsset(ctx, owner, repo, *repoObj.ID, &github.UploadOptions{Name: path.Base(file)}, fileHandle); err != nil {
+		panic(err)
+	} else {
+		fmt.Printf("release ID: %+d\n", repoObj.ID)
+		fmt.Printf("asset ID: %+x\n", asset.ID)
+	}
+}
+
+func init() {
+	cmdGithubRelease = flag.NewFlagSet("github-release", flag.ExitOnError)
+	cmdGithubRelease.StringVar(&cmdArgsGithub.repo, "repo", "", "name of repo")
+	cmdGithubRelease.StringVar(&cmdArgsGithub.owner, "owner", "", "name of user")
+	cmdGithubRelease.StringVar(&cmdArgsGithub.file, "file", "", "path to file")
+	cmdGithubRelease.StringVar(&cmdArgsGithub.commit, "commit", "", "full commit sha")
+	cmdGithubRelease.StringVar(&cmdArgsGithub.tag, "tag", "", "tag")
+}
+
+var (
+	cmdGithubRelease *flag.FlagSet
+	cmdArgsGithub    githubArgs
+)
+
+type githubArgs struct {
+	owner, repo, commit, file, tag string
+}
+
 func main() {
 	switch os.Args[1] {
 	case "set-object":
@@ -177,6 +230,9 @@ func main() {
 		getObjectStdout(os.Args[2], os.Args[3])
 	case "pub-sub-build":
 		pubsubPushBuild(os.Args[2], os.Args[3])
+	case "github-release":
+		cmdGithubRelease.Parse(os.Args[2:])
+		githubRelease(cmdArgsGithub)
 	default:
 		panic(fmt.Sprintf("invalid argument %s ", os.Args[1]))
 	}

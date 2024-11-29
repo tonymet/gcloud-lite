@@ -1,3 +1,6 @@
-build
-build2
-.env
+*
+!ci
+!*.go
+!go.mod
+!go.sum
+!lite-release.sh

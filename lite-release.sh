@@ -53,30 +53,12 @@ github_release(){
     TAG=$CLOUD_SDK_VERSION
     cd $1
     echo "creating release"
-    res=$(\
-        curl -s -L -f \
-    -X POST \
-    -H "Accept: application/vnd.github+json" \
-    -H "Authorization: Bearer $GH_TOKEN" \
-    -H "X-GitHub-Api-Version: 2022-11-28" \
-    https://api.github.com/repos/tonymet/gcloud-lite/releases \
-    -d "{\"tag_name\":\"$TAG\",\"target_commitish\":\"master\",\"name\":\"$TAG\",\"body\":\"gcloud lite release. See Release notes https://cloud.google.com/sdk/docs/release-notes\",\"draft\":false,\"prerelease\":false,\"generate_release_notes\":false}"\
-    )
+    ../gcloud-cmd github-release -tag "$TAG" -owner "tonymet" -repo "gcloud-lite" -file "google-cloud-cli-$TAG-linux-x86_64-lite.tar.gz" -commit "master"
     if [[ $? -ne 0 ]]; then
         echo "ERROR: create release fail"
         echo "res=$res"
         exit 1
     fi
-    ID=$(echo $res | jq .id)
-    echo "uploading asset id=$ID" 
-    curl -s -L \
-    -X POST \
-    -H "Accept: application/vnd.github+json" \
-    -H "Authorization: Bearer $GH_TOKEN" \
-    -H "X-GitHub-Api-Version: 2022-11-28" \
-    -H "Content-Type: application/octet-stream" \
-    "https://uploads.github.com/repos/tonymet/gcloud-lite/releases/$ID/assets?name=google-cloud-cli-$TAG-linux-x86_64-lite.tar.gz" \
-    --data-binary "@google-cloud-cli-$TAG-linux-x86_64-lite.tar.gz"
     cd ..
 }
 
