@@ -29,6 +29,21 @@ $ curl -LO https://github.com/tonymet/gcloud-lite/releases/download/472.0.0/goog
 $ tar -zxf *gz
 ```
 
+## Verifying .tgz Release Signature
+`public-key.pub` is found in this repo
+`ARCHIVE` & `ARCHIVE.sig` are included in each release
+*Verified OK* is expected for a good signature.
+```
+PUBLIC_KEY=public-key.pub
+ARCHIVE=google-cloud-cli-487.0.0-linux-x86_64-lite.tar.gz
+openssl dgst -verify "${PUBLIC_KEY}" \
+    -signature "${ARCHIVE}.sig" 
+    "${ARCHIVE}"
+Verified OK
+```
+
+
+
 ## Benchmarks
 Tested on GCP Compute Instance e2-medium
 | Image        | Time      | Improvement |

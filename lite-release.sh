@@ -7,7 +7,7 @@ die () {
 [[ -v PROJECT ]] || die "\$PROJECT is unset"
 [[ -v OBJECT ]] ||  die "\$OBJECT is unset"
 [[ -v BUCKET ]] ||  die "\$BUCKET is unset"
-[[ -v KMS_KEYPATH ]] ||  die "\$KMS_KEY_PATH is unset"
+[[ -v KMS_KEYPATH ]] ||  die "\$KMS_KEYPATH is unset"
 build_tarball(){
     [[ -v 1 ]] || die "\$1 is unset"
     [[ -v CLOUD_SDK_VERSION ]] || die "CLOUD_SDK_VERSION is unset"
