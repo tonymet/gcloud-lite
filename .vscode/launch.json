@@ -18,7 +18,9 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/gcloud.go",
-            "args": ["github-release", "-owner","tonymet","-repo","gcloud-lite","-file","./test-release.tgz","-commit","4ea0f1fa5b2252c2d3e58d42999e49bb8ae18fba"],
+            // "args": ["github-release", "-owner","tonymet","-repo","gcloud-lite","-file","./test-release.tgz","-commit","4ea0f1fa5b2252c2d3e58d42999e49bb8ae18fba"],
+            // "args": ["github-release", "-owner","tonymet","-repo","gcloud-lite","-file","./test-release.tgz","-commit","4ea0f1fa5b2252c2d3e58d42999e49bb8ae18fba"],
+            "args" :["github-release", "-tag" , "487.0.0", "-file",  "tmp/test-release.tgz",  "-repo", "sotion","-owner", "tonymet", "-k" ,"projects/tonym-us/locations/us-west2/keyRings/gcloud-lite/cryptoKeys/gcloud-lite-signing/cryptoKeyVersions/1","-commit", "master"],
             "env" : {"GODEBUG": "http1debug=1"},
             "envFile": "${workspaceFolder}/.env",
         }

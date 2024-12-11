@@ -1,6 +1,6 @@
 build
 build2
-.env
+.env*
 gcloud-cmd
 gcloud-lite
 tmp

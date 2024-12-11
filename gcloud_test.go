@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/tonymet/gcloud-go/misc"
 	"testing"
 )
 
@@ -20,7 +21,7 @@ func Test_incrementVersion(t *testing.T) {
 	}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := incrementVersion(tt.args.v); got != tt.want {
+			if got := misc.IncrementVersion(tt.args.v); got != tt.want {
 				t.Errorf("incrementVersion() = %v, want %v", got, tt.want)
 			}
 		})
@@ -45,7 +46,7 @@ func Test_getObjectContents(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getObjectContents(tt.args.bucket, tt.args.object); got != tt.want {
+			if got := misc.GetObjectContents(tt.args.bucket, tt.args.object); got != tt.want {
 				t.Errorf("getObjectContents() = %v, want %v", got, tt.want)
 			}
 		})

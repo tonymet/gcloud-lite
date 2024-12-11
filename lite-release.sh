@@ -7,6 +7,7 @@ die () {
 [[ -v PROJECT ]] || die "\$PROJECT is unset"
 [[ -v OBJECT ]] ||  die "\$OBJECT is unset"
 [[ -v BUCKET ]] ||  die "\$BUCKET is unset"
+[[ -v KMS_KEYPATH ]] ||  die "\$KMS_KEY_PATH is unset"
 build_tarball(){
     [[ -v 1 ]] || die "\$1 is unset"
     [[ -v CLOUD_SDK_VERSION ]] || die "CLOUD_SDK_VERSION is unset"
@@ -32,7 +33,7 @@ github_release(){
     TAG=$CLOUD_SDK_VERSION
     cd "$1"
     echo "creating release"
-    ../gcloud-cmd github-release -tag "$TAG" -owner "$GH_OWNER" -repo "$GH_REPO" -file "google-cloud-cli-${TAG}-linux-x86_64-lite.tar.gz" -commit "master"
+    ../gcloud-cmd github-release -tag "$TAG" -owner "$GH_OWNER" -repo "$GH_REPO" -file "google-cloud-cli-${TAG}-linux-x86_64-lite.tar.gz" -commit "master" -k "$KMS_KEYPATH"
     [[ $? -eq 0 ]] || die "ERROR: create release fail"
     cd -
 }
