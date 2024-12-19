@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"mime"
 	"os"
 
 	"github.com/tonymet/gcloud-go/kms"
@@ -19,6 +20,9 @@ func init() {
 	cmdGithubRelease.StringVar(&cmdArgsGithub.Tag, "tag", "", "tag")
 	cmdGithubRelease.StringVar(&cmdArgsGithub.KeyPath, "k", "", "kms keypath")
 	cmdKMS = flag.NewFlagSet("kms-sign", flag.ExitOnError)
+	mime.AddExtensionType(".sig", "application/octet-stream")
+	mime.AddExtensionType(".gz", "application/x-gtar-compressed")
+	mime.AddExtensionType(".tar.gz", "application/x-gtar-compressed")
 }
 
 var (

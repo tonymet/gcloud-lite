@@ -33,6 +33,7 @@ github_release(){
     TAG=$CLOUD_SDK_VERSION
     cd "$1"
     echo "creating release"
+    du -sh *gz
     ../gcloud-cmd github-release -tag "$TAG" -owner "$GH_OWNER" -repo "$GH_REPO" -file "google-cloud-cli-${TAG}-linux-x86_64-lite.tar.gz" -commit "master" -k "$KMS_KEYPATH"
     [[ $? -eq 0 ]] || die "ERROR: create release fail"
     cd -
