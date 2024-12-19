@@ -6,6 +6,7 @@ import (
 	"mime"
 	"os"
 
+	"github.com/tonymet/gcloud-go/github"
 	"github.com/tonymet/gcloud-go/kms"
 	"github.com/tonymet/gcloud-go/misc"
 	_ "golang.org/x/crypto/x509roots/fallback"
@@ -28,7 +29,7 @@ func init() {
 var (
 	cmdGithubRelease *flag.FlagSet
 	cmdKMS           *flag.FlagSet
-	cmdArgsGithub    misc.GithubArgs
+	cmdArgsGithub    github.GithubArgs
 	cmdArgsKMS       misc.KMSArgs
 	//keyPath          = "projects/dev-tonym-us/locations/us-west0/keyRings/test-software-signing/cryptoKeys/cloud-lite-signing/cryptoKeyVersions/1"
 )
@@ -46,6 +47,7 @@ func main() {
 	case "pub-sub-build":
 		misc.PubsubPushBuild(os.Args[2], os.Args[3])
 	case "github-release":
+		cmdArgsGithub.Token = os.Getenv("GH_TOKEN")
 		cmdGithubRelease.Parse(os.Args[2:])
 		err := misc.GithubRelease(cmdArgsGithub)
 		if err != nil {
