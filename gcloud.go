@@ -50,7 +50,9 @@ func main() {
 		cmdArgsGithub.Token = os.Getenv("GH_TOKEN")
 		cmdGithubRelease.Parse(os.Args[2:])
 		err := misc.GithubRelease(cmdArgsGithub)
-		if err != nil {
+		if err == misc.ErrReleaseExists {
+			fmt.Fprintln(os.Stderr, "Release Exists: "+cmdArgsGithub.Tag)
+		} else if err != nil {
 			panic(err)
 		}
 	case "kms-sign":
