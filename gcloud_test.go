@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/tonymet/gcloud-go/misc"
 	"testing"
+
+	"github.com/tonymet/gcloud-go/misc"
 )
 
 func Test_incrementVersion(t *testing.T) {
@@ -40,8 +41,8 @@ func Test_getObjectContents(t *testing.T) {
 	}{
 		{
 			"test1",
-			args{"tonym.us", "gcloud-lite/version-test"},
-			"474.0.0",
+			args{"tonym.us", "gcloud-lite/test-version-saved"},
+			"486.0.0",
 		},
 	}
 	for _, tt := range tests {
