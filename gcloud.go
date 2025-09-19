@@ -45,7 +45,11 @@ func main() {
 	case "get-object":
 		misc.GetObjectStdout(os.Args[2], os.Args[3])
 	case "pub-sub-build":
-		misc.PubsubPushBuild(os.Args[2], os.Args[3])
+		bc := misc.BuildCommand{Command: "docker-build", Version: os.Args[4]}
+		err := misc.PubSubPush(os.Args[2], os.Args[3], bc)
+		if err != nil {
+			panic(err)
+		}
 	case "github-release":
 		cmdArgsGithub.Token = os.Getenv("GH_TOKEN")
 		cmdGithubRelease.Parse(os.Args[2:])

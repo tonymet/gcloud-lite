@@ -49,7 +49,8 @@ function record_version(){
 
 function trigger_build(){
     echo "pub-sub build version=$CLOUD_SDK_VERSION"
-    ./gcloud-cmd pub-sub-build "$PROJECT" "$CLOUD_SDK_VERSION"
+    TOPIC="gcloud-lite"
+    ./gcloud-cmd pub-sub-build "$PROJECT" "$TOPIC" "$CLOUD_SDK_VERSION"
     if [[ $? -ne 0 ]]; then
         echo "ERROR: pubsub failed"
     fi

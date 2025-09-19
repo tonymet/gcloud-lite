@@ -23,7 +23,15 @@
             "args" :["github-release", "-tag" , "487.0.0", "-file",  "tmp/test-release.tgz",  "-repo", "sotion","-owner", "tonymet", "-k" ,"projects/tonym-us/locations/us-west2/keyRings/gcloud-lite/cryptoKeys/gcloud-lite-signing/cryptoKeyVersions/1","-commit", "master"],
             "env" : {"GODEBUG": "http1debug=1"},
             "envFile": "${workspaceFolder}/.env",
-        }
+        },
+        {
+            "name": "pubsub",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/gcloud.go",
+            "args": ["pub-sub-build", "tonym-us", "gcloud-lite", "497.0.0"]
+        },
 
     ]
 }

@@ -4,3 +4,5 @@ build2
 gcloud-cmd
 gcloud-lite
 tmp
+lite-release.sh
+gcloud
