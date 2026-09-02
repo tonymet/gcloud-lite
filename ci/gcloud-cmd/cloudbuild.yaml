@@ -1,0 +1,19 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        if [ -d "ci/gcloud-cmd" ]; then
+          cd ci/gcloud-cmd
+        fi
+        docker build -t "${_ARTIFACT_IMAGE}" .
+
+images:
+  - '${_ARTIFACT_IMAGE}'
+
+substitutions:
+  _ARTIFACT_IMAGE: 'us-west1-docker.pkg.dev/tonym-us/tonym-us/gcloud-lite-gcloud-cmd:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

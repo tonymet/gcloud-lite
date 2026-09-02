@@ -11,6 +11,11 @@ GCloud-Lite is a distribution of the CLI that strips these unnessary dependencie
 * [Runnable docker image](https://console.cloud.google.com/artifacts/docker/tonym-us/us-west1/gcloud-lite/gcloud-lite?hl=en&project=tonym-us) — 93% smaller
 * [tgz tarball](https://github.com/tonymet/gcloud-lite/releases) — 75% smaller
 
+## Documentation
+* [Architecture & Pipeline Design](docs/architecture.md)
+* [Sanity Test Suite](docs/sanity-tests.md)
+* [Weekly Release & Operations Guide](docs/release-guide.md)
+
 ## Running the Docker Image
 ```
 $ docker pull us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite

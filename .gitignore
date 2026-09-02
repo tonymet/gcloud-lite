@@ -1,8 +1,8 @@
 build
 build2
 .env*
-gcloud-cmd
-gcloud-lite
+/gcloud-cmd
+/gcloud-lite
 tmp
-lite-release.sh
 gcloud
+dist/**

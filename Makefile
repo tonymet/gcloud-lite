@@ -1,17 +1,19 @@
-.PHONY:test
-IMAGE=us-west1-docker.pkg.dev/tonym-us/tonym-us/gcloud-lite-build
-gcloud-lite-build:
-	docker build -f ci/Dockerfile  . -t  ${IMAGE}
+.PHONY: test sanity-test-docker sanity-test-tarball export-tarball cloudbuild
 
-cloudbuild-ci:
-	 gcloud beta builds submit --config ci/cloudbuild.yaml .
+cloudbuild:
+	gcloud builds submit --config cloudbuild.yaml .
 
-push-gcloud-lite-build:
-	docker push us-west1-docker.pkg.dev/tonym-us/tonym-us/${IMAGE}
-
-docker-run:
-	docker run -v${HOME}:/root --env-file=.env ${IMAGE} build
+export-tarball:
+	DOCKER_BUILDKIT=1 docker build --target export-tarball --build-arg CLOUD_SDK_VERSION=$${CLOUD_SDK_VERSION:-573.0.0} --output type=local,dest=$${DIST_DIR:-./dist} .
 
 test:
 	go test .
-	shellcheck -s bash *sh
+	shellcheck -s bash *sh test/*sh
+
+sanity-test-docker:
+	chmod +x test/sanity-test.sh
+	./test/sanity-test.sh docker $${IMAGE_TAG:-gcloud-lite:latest}
+
+sanity-test-tarball:
+	chmod +x test/sanity-test.sh
+	./test/sanity-test.sh tarball $${TARBALL}

@@ -11,17 +11,15 @@ die () {
 build_tarball(){
     [[ -v 1 ]] || die "\$1 is unset"
     [[ -v CLOUD_SDK_VERSION ]] || die "CLOUD_SDK_VERSION is unset"
-    [[ -v ARCH ]] || die echo "ARCH is unset"
-    echo "starting download"
-    mkdir -p "$1" && cd "$1" && \
-    curl -s -O "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz" && \
-        tar xzf "google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz" && \
-        rm "google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}.tar.gz" && \
-        rm -rf google-cloud-sdk/platform/bundledpythonunix && \
-        rm -rf google-cloud-sdk/bin/anthoscli && \
-        rm -rf google-cloud-sdk/lib/third_party/botocore && \
-        tar -czf  "google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}-lite.tar.gz" google-cloud-sdk && \
-        cd -
+    [[ -v ARCH ]] || die "ARCH is unset"
+    echo "Building and exporting stripped tarball via Docker BuildKit..."
+    mkdir -p "$1"
+    DOCKER_BUILDKIT=1 docker build \
+        --target export-tarball \
+        --build-arg CLOUD_SDK_VERSION="${CLOUD_SDK_VERSION}" \
+        --build-arg ARCH="${ARCH}" \
+        --output type=local,dest="$1" \
+        .
 }
 
 github_release(){
@@ -72,6 +70,7 @@ CLOUD_SDK_VERSION=$(./gcloud-cmd active-version "$BUCKET" "$OBJECT")
 export CLOUD_SDK_VERSION
 check_version
 build_tarball "$1"
+./test/sanity-test.sh tarball "$1/google-cloud-cli-${CLOUD_SDK_VERSION}-linux-${ARCH}-lite.tar.gz"
 github_release "$1"
 record_version
 trigger_build

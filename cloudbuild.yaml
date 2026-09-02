@@ -1,10 +1,118 @@
 steps:
-  # Docker Build
+  # Step 1: Copy pre-built gcloud-cmd helper utility
+  - name: 'us-west1-docker.pkg.dev/tonym-us/tonym-us/gcloud-lite-gcloud-cmd:latest'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        cp /gcloud-cmd /workspace/gcloud-cmd
+        chmod +x /workspace/gcloud-cmd
+
+  # Step 2: Version Check & Early Sentinel Gatekeeper
+  - name: 'us-west1-docker.pkg.dev/tonym-us/tonym-us/gcloud-lite-gcloud-cmd:latest'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        NEXT_VERSION=$(/workspace/gcloud-cmd active-version "${_BUCKET}" "${_OBJECT}")
+        echo "Checking availability of Google Cloud SDK version: $${NEXT_VERSION}"
+        
+        HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-$${NEXT_VERSION}-linux-x86_64.tar.gz")
+        if [ "$${HTTP_STATUS}" != "200" ]; then
+          echo "Version $${NEXT_VERSION} is not available upstream (HTTP $${HTTP_STATUS}). Skipping remaining steps."
+          touch /workspace/skip_build
+          exit 0
+        fi
+        
+        echo "$${NEXT_VERSION}" > /workspace/resolved_version
+        echo "Version $${NEXT_VERSION} is available! Proceeding with release build."
+
+  # Step 3: Unified Multi-Stage Build (Docker Image + Tarball Export)
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '--build-arg', 'CLOUD_SDK_VERSION=${_CLOUD_SDK_VERSION}', '-t',
-           'us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:latest',
-           '-t', 'us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:${_CLOUD_SDK_VERSION}',
-           '.']
-images: ["us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite"]
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        [ -f /workspace/skip_build ] && { echo "Skipped (no new release)"; exit 0; }
+        VERSION=$(cat /workspace/resolved_version)
+        export DOCKER_BUILDKIT=1
+        
+        # Build runtime image
+        docker build \
+          --build-arg CLOUD_SDK_VERSION="$${VERSION}" \
+          -t "us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:latest" \
+          -t "us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:$${VERSION}" \
+          .
+
+        # Export stripped tarball and sha256 to /workspace/dist
+        mkdir -p /workspace/dist
+        docker build \
+          --target export-tarball \
+          --build-arg CLOUD_SDK_VERSION="$${VERSION}" \
+          --output type=local,dest=/workspace/dist \
+          .
+
+  # Step 4: Sanity Test Both Artifacts
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        [ -f /workspace/skip_build ] && { echo "Skipped (no new release)"; exit 0; }
+        if [ "${_SKIP_SANITY}" = "true" ] || [ "${_SKIP_SANITY}" = "1" ]; then
+          echo "Skipping sanity tests (_SKIP_SANITY is ${_SKIP_SANITY})"
+          exit 0
+        fi
+        VERSION=$(cat /workspace/resolved_version)
+        chmod +x test/sanity-test.sh
+        ./test/sanity-test.sh all \
+          "us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:$${VERSION}" \
+          "/workspace/dist/google-cloud-cli-$${VERSION}-linux-x86_64-lite.tar.gz"
+
+  # Step 5: Push Docker Images to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        [ -f /workspace/skip_build ] && { echo "Skipped (no new release)"; exit 0; }
+        VERSION=$(cat /workspace/resolved_version)
+        docker push "us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:latest"
+        docker push "us-west1-docker.pkg.dev/${PROJECT_ID}/gcloud-lite/gcloud-lite:$${VERSION}"
+
+  # Step 6: Publish Release to GitHub, Sign & Record Released Version to GCS
+  - name: 'us-west1-docker.pkg.dev/tonym-us/tonym-us/gcloud-lite-gcloud-cmd:latest'
+    entrypoint: 'sh'
+    secretEnv: ['GH_TOKEN']
+    args:
+      - '-c'
+      - |
+        [ -f /workspace/skip_build ] && { echo "Skipped (no new release)"; exit 0; }
+        VERSION=$(cat /workspace/resolved_version)
+        cd /workspace/dist
+        /workspace/gcloud-cmd github-release \
+          -tag "$${VERSION}" \
+          -owner "${_GH_OWNER}" \
+          -repo "${_GH_REPO}" \
+          -file "google-cloud-cli-$${VERSION}-linux-x86_64-lite.tar.gz" \
+          -commit "master" \
+          -k "${_KMS_KEYPATH}"
+        /workspace/gcloud-cmd set-object "${_BUCKET}" "${_OBJECT}" "$${VERSION}"
+
+substitutions:
+  _BUCKET: 'tonym.us'
+  _OBJECT: 'gcloud-lite/version-saved'
+  _GH_OWNER: 'tonymet'
+  _GH_REPO: 'gcloud-lite'
+  _KMS_KEYPATH: 'projects/tonym-us/locations/us-west2/keyRings/gcloud-lite/cryptoKeys/gcloud-lite-signing/cryptoKeyVersions/1'
+  _SKIP_SANITY: 'true'
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/GH_TOKEN/versions/latest
+      env: 'GH_TOKEN'
+
+serviceAccount: 'projects/tonym-us/serviceAccounts/cloudbuild-limited@tonym-us.iam.gserviceaccount.com'
+
 options:
   logging: CLOUD_LOGGING_ONLY

@@ -1,8 +1,4 @@
-steps:
-  # Docker Build
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-f', 'ci/Dockerfile', '-t',
-           'us-west1-docker.pkg.dev/${PROJECT_ID}/tonym-us/gcloud-lite-build:latest', '.']
-images: ["us-west1-docker.pkg.dev/${PROJECT_ID}/tonym-us/gcloud-lite-build"]
-options:
-  logging: CLOUD_LOGGING_ONLY
+# DEPRECATED: Consolidated into the root cloudbuild.yaml.
+# The root cloudbuild.yaml now handles checking the upstream version, building both
+# the Docker image and stripped tarball in a single pass, running sanity tests,
+# and releasing to GitHub.
