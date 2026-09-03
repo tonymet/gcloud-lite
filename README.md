@@ -51,10 +51,19 @@ Verified OK
 
 ## Benchmarks
 Tested on GCP Compute Instance e2-medium
-| Image        | Time      | Improvement |
-|--------------|-----------|------------|
-| google-cloud-cli | 1m29s     | -     |
-| gcloud-lite      | 12.6s  |    86%  |
+
+### Image Size Comparison
+| Image | Image Tag | Compressed Download Size | Uncompressed Disk Size | Size Reduction |
+| :--- | :--- | :--- | :--- | :--- |
+| **Standard Google Cloud CLI** (`google-cloud-cli`) | `gcr.io/google.com/cloudsdktool/google-cloud-cli:latest` | ~1.1 GB | ~2.8 GB | Baseline |
+| **Standard Alpine CLI** (`google-cloud-cli:alpine`) | `gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine` | ~450 MB | ~1.4 GB | ~50% |
+| **gcloud-lite** | `us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite:latest` | **~105 MB** | **~350 MB** | **87% smaller** |
+
+### Pull Time Performance
+| Image | Pull Time | Improvement |
+| :--- | :--- | :--- |
+| `google-cloud-cli:latest` | 1m 29s | Baseline |
+| `gcloud-lite:latest` | **12.6s** | **86% faster** |
 
 ```
 # time  docker pull us-west1-docker.pkg.dev/tonym-us/gcloud-lite/gcloud-lite

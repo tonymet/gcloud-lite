@@ -6,3 +6,4 @@ build2
 tmp
 gcloud
 dist/**
+/google-cloud-cli*tar.gz
